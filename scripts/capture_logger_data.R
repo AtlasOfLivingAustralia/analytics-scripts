@@ -21,12 +21,7 @@ rows <- bind_rows(lapply(events, function(x) {
          count_type = c("event", "record"), event_type = as.character(x))
 }))
 
-if (!file.exists('/data/logger_data/logger_data.csv')) {
-  new_data <- rows
-} else {
-  old_data <- as_tibble(read.csv('/data/logger_data/logger_data.csv')) %>%
-    mutate(event_type = as.character(event_type))
-  new_data <- bind_rows(old_data, rows)
-}
+path <- file.path('/data/logger_data',
+                  paste0('logger_data_', Sys.Date(), '.csv'))
 
-write.csv(new_data, '/data/logger_data/logger_data.csv', row.names = FALSE)
+write.csv(new_data, path, row.names = FALSE)
