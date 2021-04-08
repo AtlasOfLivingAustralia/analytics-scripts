@@ -5,11 +5,18 @@ library(jsonlite)
 library(lubridate)
 library(dplyr)
 library(data.table)
+library(paws)
 setwd('/home/ste748/kibanr/R')
 
 sapply(list.files(path = ".", pattern = "*.R"), source)
 
-out_dir <- '/data/kibana_data'
+#out_dir <- '/data/kibana_data'
+# Setup S3 things
+tmp <- tempfile()
+s3 <- paws::s3()
+
+bucket_id <- Sys.getenv("AWS_BUCKET_ID")
+
 
 # get data for the last month
 # first day of last month
@@ -33,7 +40,15 @@ body <- request_template('/home/ste748/request_template.json') %>%
 
 result <- squash_buckets(request_data(body))
 
-write_result(result, start, file.path(out_dir, paste0('package_versions_', start, '.csv')))
+out_path <- paste0('kibana_data/', 'package_versions_', start, '.csv')
+
+write_result(result, start, tmp)
+
+s3$put_object(
+  Bucket = bucket_id,
+  Body = tmp,
+  Key = out_path
+)
 
 ############################################################
 
@@ -60,16 +75,30 @@ request_df <- result %>% select(doc_count, key2) %>%
   group_by(user_agent_class) %>% 
   summarise(request_count = sum(doc_count))
 
-write_result(request_df, start, file.path(out_dir, paste0('requests_by_ua_', start, ".csv")))
+out_path <- paste0('kibana_data/requests_by_ua_', start, '.csv')
 
+write_result(request_df, start, tmp)
+
+s3$put_object(
+  Bucket = bucket_id,
+  Body = tmp,
+  Key = out_path
+)
 # Number of unique users
 user_df <- result %>% select(key, key2) %>%
   rowwise() %>% mutate(user_agent_class = user_agent_category(key2)) %>%
   group_by(user_agent_class) %>%
   summarise(unique_users = n_distinct(key))
 
-write_result(user_df, start, file.path(out_dir, paste0('unique_users_by_ua_', start, '.csv')))
+out_path <- paste0('kibana_data/', 'unique_users_by_ua_', start, '.csv')
 
+write_result(user_df, start, tmp)
+
+s3$put_object(
+  Bucket = bucket_id,
+  Body = tmp,
+  Key = out_path
+)
 
 ########### Which endpoints are R/Python users using ############
 
@@ -111,4 +140,12 @@ result <- bind_rows(result1, result3) %>%
   rowwise() %>%
   mutate(path_type = classify_url_paths(key))
 
-write_result(result, start, path = file.path(out_dir, paste0('request_paths_', start, '.csv')))
+out_path <- paste0('kibana_data/', 'request_paths_', start, '.csv')
+
+write_result(result, start, tmp)
+
+s3$put_object(
+  Bucket = bucket_id,
+  Body = tmp,
+  Key = out_path
+)
