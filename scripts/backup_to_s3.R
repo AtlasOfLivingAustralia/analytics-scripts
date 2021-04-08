@@ -1,4 +1,4 @@
-Script to backup all metrics data to S3
+# Script to backup all metrics data to S3
 
 library(paws)
 library(jsonlite)
