@@ -38,3 +38,9 @@ message("Backing up image counts... ")
 backup_data(in_path = '/data/daily_image_stats/',
             out_path = 'image_counts/')
 message("Image counts backed up successfully")
+
+# Backup data resource counts
+message("Backing up data resource counts... ")
+backup_data(in_path = '/data/data_resource_counts/',
+            out_path = 'data_resource_counts/')
+message("Data resource counts backed up successfully")
