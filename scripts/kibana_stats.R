@@ -6,11 +6,10 @@ library(lubridate)
 library(dplyr)
 library(data.table)
 library(paws)
-setwd('/home/ste748/kibanr/R')
 
-sapply(list.files(path = ".", pattern = "*.R"), source)
+remotes::install_github("matildastevenson/kibanr@main")
+library(kibanr)
 
-#out_dir <- '/data/kibana_data'
 # Setup S3 things
 tmp <- tempfile()
 s3 <- paws::s3()
