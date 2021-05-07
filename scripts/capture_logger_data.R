@@ -5,15 +5,14 @@ library(jsonlite)
 library(lubridate)
 library(dplyr)
 library(tibble)
+library(paws)
 
 date <- format(Sys.Date(), "%d-%m-%y")
+
 
 events <- c("1000", "1001", "1002", "1003", "2000")
 
 resp <- fromJSON("https://logger.ala.org.au/service/totalsByType",)
-
-#old_data <- as_tibble(read.csv('/data/logger_data/logger_data.csv')) %>%
-#  mutate(event_type = as.character(event_type))
 
 rows <- bind_rows(lapply(events, function(x) {
   counts <- resp$totals[[x]]
@@ -25,3 +24,14 @@ path <- file.path('/data/logger_data',
                   paste0('logger_data_', Sys.Date(), '.csv'))
 
 write.csv(new_data, path, row.names = FALSE)
+
+bucket_id <- Sys.getenv("AWS_BUCKET_ID")
+
+# Create an object to interact with S3
+s3 <- paws::s3()
+
+s3$put_object(
+  Bucket = bucket_id,
+  Body = '/data/logger_data',
+  Key = paste0('logger_data_', Sys.Date(), '.csv')
+)
