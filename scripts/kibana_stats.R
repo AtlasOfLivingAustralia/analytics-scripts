@@ -32,7 +32,8 @@ body <- request_template('/home/ste748/request_template.json') %>%
       "WU (Wirtschaftsuniversitaet Wien) - Vienna University of Economics and Business"
   )) %>%
   add_travis_filter()  %>%
-  add_filter(list("httpd.access.agent.keyword" = c("ALA4R 1.9.0", "ALA4R 1.8.0", "koala 1.0.0", "galah 1.0.0"))) %>%
+  add_filter(list("httpd.access.agent.keyword" = c("ALA4R 1.9.0", "ALA4R 1.8.0", "koala 1.0.0", "galah 1.0.0",
+                                                   "galah 1.1.0"))) %>%
   add_negative_filter(filter = list("httpd.access.url_params.email.keyword" =
                                     "ala4r@ala.org.au")) %>%
   aggregate_by("httpd.access.agent.keyword")
@@ -119,7 +120,8 @@ result1 <- squash_buckets(
     list("httpd.access.agent.keyword" = c("ALA4R 1.9.0",
                                           "ALA4R 1.8.0",
                                           "koala 1.0.0",
-                                          "galah 1.0.0"
+                                          "galah 1.0.0",
+                                          "galah 1.1.0"
                                           )))))
 # for now don't include this because it is messy + not sure if we can get any meaningful 
 # info from it
