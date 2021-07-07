@@ -4,7 +4,7 @@
 
 library(galah)
 
-dr_counts <- ala_counts(group_by = 'data_resource_uid', limit = 10000)
+dr_counts <- ala_counts(group_by = 'dataResourceUid', limit = 10000)
 dr_counts$date <- Sys.Date()
 
 # Write to a temporary file
