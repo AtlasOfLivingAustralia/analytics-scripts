@@ -116,11 +116,9 @@ body <- request_template('/home/ste748/request_template.json') %>%
 
 result1 <- squash_buckets(
   request_data(body %>% add_filter(
-    list("httpd.access.agent.keyword" = c("ALA4R 1.9.0",
-                                          "ALA4R 1.8.0",
+    list("httpd.access.agent.keyword" = c("ALA4R*",
                                           "koala 1.0.0",
-                                          "galah 1.0.0",
-                                          "galah 1.1.0"
+                                          "galah*"
                                           )))))
 # for now don't include this because it is messy + not sure if we can get any meaningful 
 # info from it
